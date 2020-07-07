@@ -12,8 +12,8 @@ Contact me: Intriguing#0001
 ✅ Debian 10 (Extra Dependency Needed - Check Wiki) <br>
 ✅ Debian 9 (Extra Dependency Needed - Check Wiki) <br>
 ✅ CentOS 8<br>
-✅ CentOS 7
-❌ Windows
+✅ CentOS 7<br>
+❌ Windows<br>
 ❌ MacOS
 
 ### Required Dependencies
