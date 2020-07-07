@@ -19,8 +19,6 @@ Contact me: Intriguing#0001
 * [`AWS CLI (Used for uploading files to AWS service)`](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-linux.html)
 * MySQL (if your server uses mysql you want to backup)
 
-Debian Only
+Debian Only:
 * `sudo apt-get install uuid-runtime` - Installs the application needed for generating a temp folder needed for compressing the server and SQL
-
-
 
