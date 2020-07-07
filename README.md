@@ -6,10 +6,10 @@ Contact me: Intriguing#0001
 ## Supported Distributions
 ✅ = Tested <img width=16 height=16 src="https://i.imgur.com/oYtywhM.png"> = Not Tested ❌ = Not Supported
 
-<img width=16 height=16 src="https://i.imgur.com/oYtywhM.png"> Ubuntu 20.04 LTS<br>
+✅ Ubuntu 20.04 LTS<br>
 ✅ Ubuntu 18.04 LTS<br>
-<img width=16 height=16 src="https://i.imgur.com/oYtywhM.png"> Ubuntu 16.04 LTS<br>
-<img width=16 height=16 src="https://i.imgur.com/oYtywhM.png"> Debian 10<br>
+✅ Ubuntu 16.04 LTS<br>
+✅ Debian 10<br>
 <img width=16 height=16 src="https://i.imgur.com/oYtywhM.png"> Debian 9<br>
 <img width=16 height=16 src="https://i.imgur.com/oYtywhM.png"> CentOS 8<br>
 <img width=16 height=16 src="https://i.imgur.com/oYtywhM.png"> CentOS 7
