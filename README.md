@@ -122,7 +122,8 @@ Feel free to put them in any folder (maybe the root or home directory), **BUT** 
 To run the script, simply do:
 ```
 chmod a+x backup
-./backup```
+./backup
+```
 
 ## Configuration Guide
 [Click here](https://github.com/Intriguing-RC/MCBackup/wiki)
