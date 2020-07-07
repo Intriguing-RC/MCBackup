@@ -13,6 +13,8 @@ Contact me: Intriguing#0001
 ✅ Debian 9 (Extra Dependency Needed - Check Wiki) <br>
 ✅ CentOS 8<br>
 ✅ CentOS 7
+❌ Windows
+❌ MacOS
 
 ### Required Dependencies
 * [`yq by mikefarah (Used for YML configuration files)`](https://github.com/mikefarah/yq)
