@@ -119,5 +119,10 @@ I will go over on how to setup Wasabi in this tutorial.
 Download the script and config here: [CLICK ME!](https://github.com/Intriguing-RC/MCBackup/releases)
 Feel free to put them in any folder (maybe the root or home directory), **BUT** make sure they are both in the **SAME FOLDER**!
 
+To run the script, simply do:
+```
+chmod a+x backup
+./backup```
+
 ## Configuration Guide
 [Click here](https://github.com/Intriguing-RC/MCBackup/wiki)
