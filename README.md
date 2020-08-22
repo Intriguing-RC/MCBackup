@@ -1,5 +1,5 @@
 # MCBackup
-An efficient backup system to backup files on Linux Systems focused on Minecraft Networks *(This is my first Bash script)* It uses the Amazon S3 cloud storage system, which is a pretty good choice for when backing up files!
+An efficient backup system to backup files on Linux Systems focused on Minecraft Networks. It uses the Amazon S3 cloud storage system, which is a pretty good choice for when backing up files!
 
 Contact me: Intriguing#0001
 
