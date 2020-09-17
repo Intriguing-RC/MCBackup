@@ -1,0 +1,83 @@
+#  ___          _               ___         _
+# | _ ) __ _ __| |___  _ _ __  / __|_  _ __| |_ ___ _ __
+# | _ \/ _` / _| / / || | '_ \ \__ \ || (_-<  _/ -_) '  \
+# |___/\__,_\__|_\_\\_,_| .__/ |___/\_, /__/\__\___|_|_|_|
+#                       |_|         |__/
+#
+# Uses Amazon S3 service (SECRET / ACCESS KEY)
+# Script by Intriguing#0001
+#
+# NOTE: This will not work on shared servers without ssh access!
+#
+
+# Whether to set the file debug (show files being sent / compressed)
+debug: true
+bucket-settings:
+  # Endpoint URL - Don't set if you're not using a different Endpoint URL
+  # NOTE: it has to have https:// or http://
+  endpoint-url: 'https://s3.wasabisys.com'
+  # Access Key (XXXXXXXXXXXXXXXXXXXXX)
+  access-key: 'XXXXXXXXXXXXXXXXXXXXX'
+  # Secret Key (XXXXXXXXXXXXXXXXXXXXX)
+  secret-key: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+  # Region (e.g. us-east-2)
+  region: 'us-east-1'
+  # Bucket for Backups
+  bucket: 'backups'
+# Note that the user must have access to all specified databases below
+mysql-settings:
+  host: 'localhost'
+  username: 'root'
+  password: ''
+servers:
+  - name: 'proxy'
+    sources:
+      # What is the server of the folder it's going to backup
+      server-folder: '/home/servers/proxy/'
+      # List of all databases to backup
+      mysql-databases:
+      - 'proxy_ranks'
+    modules:
+      # Non Compressed meaning accessable folders where you'll be able to see indiviual files
+      non-compressed:
+        # Non Compressed is pretty slow - enable it only if you know you're frequently going to
+        # to be downloading indiviual config/plugins from the Amazon S3 Storage Object.
+        enabled: true
+        # What folder will the backup go in
+        destination: 'proxy/non_compressed/'
+      compressed:
+        # This option will compress and upload the tar.gz file
+        enabled: true
+        # What folder will the backup go in
+        destination: 'proxy/compressed/'
+      sql:
+        # This option will upload the databases
+        enabled: true
+        # What folder will the backup go in
+        destination: 'proxy/sql/'
+  - name: 'hub'
+    sources:
+      # What is the server of the folder it's going to backup
+      server-folder: '/home/servers/hub/'
+      # List of all databases to backup
+      mysql-databases:
+      - 'hub_bans'
+      - 'hub_ranks'
+    modules:
+      # Non Compressed meaning accessable folders where you'll be able to see indiviual files
+      non-compressed:
+        # Non Compressed is pretty slow - enable it only if you know you're frequently going to
+        # to be downloading indiviual config/plugins from the Amazon S3 Storage Object.
+        enabled: true
+        # What folder will the backup go in
+        destination: 'hub/non_compressed/'
+      compressed:
+        # This option will compress and upload the tar.gz file
+        enabled: true
+        # What folder will the backup go in
+        destination: 'hub/compressed/'
+      sql:
+        # This option will upload the databases
+        enabled: true
+        # What folder will the backup go in
+        destination: 'hub/sql/'
