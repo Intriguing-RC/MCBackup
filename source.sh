@@ -21,22 +21,22 @@ DATE=$(date +%m-%d-%y-%T)
 #
 # Load Configuration Settings
 #
-debug=$(sudo yq r backup.yml debug)
-endpoint_url=$(sudo yq r backup.yml bucket-settings.endpoint-url)
-secret_key=$(sudo yq r backup.yml bucket-settings.secret-key)
-access_key=$(sudo yq r backup.yml bucket-settings.access-key)
-region=$(sudo yq r backup.yml bucket-settings.region)
-bucket=$(sudo yq r backup.yml bucket-settings.bucket)
-host=$(sudo yq r backup.yml mysql-settings.host)
-username=$(sudo yq r backup.yml mysql-settings.username)
-password=$(sudo yq r backup.yml mysql-settings.password)
+debug=$(yq r backup.yml debug)
+endpoint_url=$(yq r backup.yml bucket-settings.endpoint-url)
+secret_key=$(yq r backup.yml bucket-settings.secret-key)
+access_key=$(yq r backup.yml bucket-settings.access-key)
+region=$(yq r backup.yml bucket-settings.region)
+bucket=$(yq r backup.yml bucket-settings.bucket)
+host=$(yq r backup.yml mysql-settings.host)
+username=$(yq r backup.yml mysql-settings.username)
+password=$(yq r backup.yml mysql-settings.password)
 
 #
 # Run Backup Function
 #
 function runBackup {
   # Get the number of servers in the configuration
-  serverCount=$(expr $(sudo yq r backup.yml --length servers) - 1)
+  serverCount=$(expr $(yq r backup.yml --length servers) - 1)
 
   # Print starting backup message
   echo -e "${PREFIX} Starting Backup ($(date +%D\ %H:%M:%S))${DEFAULTC}"
@@ -46,7 +46,7 @@ function runBackup {
   for s in $(sudo seq 0 ${serverCount})
   do
     # Set current server name
-    server=$(sudo yq r backup.yml servers[$s].name)
+    server=$(yq r backup.yml servers[$s].name)
     # Print it out
     echo -e "${GREENC}- ${server}"
   done
@@ -55,12 +55,12 @@ function runBackup {
   for s in $(sudo seq 0 ${serverCount})
   do
     # Set current server name, folder, database length, and if the different modules are enabled
-    serverName=$(sudo yq r backup.yml servers[$s].name)
-    serverFolder=$(sudo yq r backup.yml servers[$s].sources.server-folder)
-    serverDatabasesLength=$(expr $(sudo yq r backup.yml --length servers[$s].sources.mysql-databases) - 1)
-    nonCompressedEnabled=$(sudo yq r backup.yml servers[$s].modules.non-compressed.enabled)
-    compressedEnabled=$(sudo yq r backup.yml servers[$s].modules.compressed.enabled)
-    sqlEnabled=$(sudo yq r backup.yml servers[$s].modules.sql.enabled)
+    serverName=$(yq r backup.yml servers[$s].name)
+    serverFolder=$(yq r backup.yml servers[$s].sources.server-folder)
+    serverDatabasesLength=$(expr $(yq r backup.yml --length servers[$s].sources.mysql-databases) - 1)
+    nonCompressedEnabled=$(yq r backup.yml servers[$s].modules.non-compressed.enabled)
+    compressedEnabled=$(yq r backup.yml servers[$s].modules.compressed.enabled)
+    sqlEnabled=$(yq r backup.yml servers[$s].modules.sql.enabled)
 
     # Print out server name and set sources message
     echo -e "\n\n${BOLDF}${REDC}BACKING UP: ${NORMALF}${GREENC}${serverName}"
@@ -74,7 +74,7 @@ function runBackup {
     for d in $(sudo seq 0 ${serverDatabasesLength})
     do
       # Set current database in the loop
-      serverDatabase=$(sudo yq r backup.yml servers[$s].sources.mysql-databases[$d])
+      serverDatabase=$(yq r backup.yml servers[$s].sources.mysql-databases[$d])
       # Print it out
       echo -e "${GREENC}- ${serverDatabase}"
     done
@@ -94,18 +94,18 @@ function runBackup {
     # Non Compress Backup
     if [[ $nonCompressedEnabled == true ]]; then
       # Set destination
-      destination=$(sudo yq r backup.yml servers[$s].modules.non-compressed.destination)
+      destination=$(yq r backup.yml servers[$s].modules.non-compressed.destination)
       # Print out that the process is starting
       echo -e "${PREFIX} Starting Non Compressed Backup Process${CYANC}"
 
       # If debug is true then put debug tag
       if [[ ${debug} == true ]]; then
         # AWS S3 Backup from Server Folder to Non Compressed destination with Endpoint ${endpoint_url}
-        sudo aws s3 cp --debug --recursive --endpoint-url ${endpoint_url} ${serverFolder} s3://${bucket}/${destination}$DATE
+        aws s3 cp --debug --recursive --endpoint-url ${endpoint_url} ${serverFolder} s3://${bucket}/${destination}$DATE
       # Nothing if debug is not true
       else
         # AWS S3 Backup from Server Folder to Non Compressed destination with Endpoint ${endpoint_url}
-        sudo aws s3 cp --quiet --no-progress --only-show-errors --recursive --endpoint-url ${endpoint_url} ${serverFolder} s3://${bucket}/${destination}$DATE
+        aws s3 cp --quiet --no-progress --only-show-errors --recursive --endpoint-url ${endpoint_url} ${serverFolder} s3://${bucket}/${destination}$DATE
       fi
       # Print out that the Non Compressed Process is completed
       echo -e "${PREFIX} Completed Non Compressed Backup Process"
@@ -114,7 +114,7 @@ function runBackup {
     # Compressed Backup
     if [[ $compressedEnabled == true ]]; then
       # Set destination
-      destination=$(sudo yq r backup.yml servers[$s].modules.compressed.destination)
+      destination=$(yq r backup.yml servers[$s].modules.compressed.destination)
       # Print out that the process is starting
       echo -e "${PREFIX} Starting Compressed Backup Process${CYANC}"
 
@@ -123,12 +123,12 @@ function runBackup {
         # Compress folder with Debug
         sudo tar -czvf ${TEMP_FOLDER}${DATE}.tar.gz -C ${serverFolder} .
         # AWS S3 Backup from ZIP File to Compressed destination with Endpoint ${endpoint_url}
-        sudo aws s3 cp --debug --endpoint-url ${endpoint_url} ${TEMP_FOLDER}${DATE}.tar.gz s3://${bucket}/${destination}
+        aws s3 cp --debug --endpoint-url ${endpoint_url} ${TEMP_FOLDER}${DATE}.tar.gz s3://${bucket}/${destination}
       else
         # Compress folder without Debug
         sudo tar -czf ${TEMP_FOLDER}${DATE}.tar.gz -C ${serverFolder} .
         # AWS S3 Backup from ZIP File to Compressed destination with Endpoint ${endpoint_url}
-        sudo aws s3 cp --quiet --no-progress --only-show-errors --endpoint-url ${endpoint_url} ${TEMP_FOLDER}${DATE}.tar.gz s3://${bucket}/${destination}
+        aws s3 cp --quiet --no-progress --only-show-errors --endpoint-url ${endpoint_url} ${TEMP_FOLDER}${DATE}.tar.gz s3://${bucket}/${destination}
       fi
       # Delete the temp file
       sudo rm -rf ${TEMP_FOLDER}${DATE}.tar.gz
@@ -139,38 +139,38 @@ function runBackup {
     # SQL Backup
     if [[ $sqlEnabled == true ]]; then
       # Set destination
-      destination=$(sudo yq r backup.yml servers[$s].modules.sql.destination)
+      destination=$(yq r backup.yml servers[$s].modules.sql.destination)
       # Print out that the process is starting
       echo -e "${PREFIX} Starting SQL Backup Process${CYANC}"
       # Do for each SQL database
       for d in $(sudo seq 0 ${serverDatabasesLength})
       do
         # Set current database
-        serverDatabase=$(sudo yq r backup.yml servers[$s].sources.mysql-databases[$d])
+        serverDatabase=$(yq r backup.yml servers[$s].sources.mysql-databases[$d])
         # Check if debug is true
         if [[ ${debug} == true ]]; then
           # Check if password is null
           if [[ $password == "" ]]; then
             # Make a dump without password
-            sudo mysqldump -vl -u ${username} -h ${host} ${serverDatabase} > ${TEMP_FOLDER}${serverDatabase}-${DATE}.sql
+            mysqldump -vl -u ${username} -h ${host} ${serverDatabase} > ${TEMP_FOLDER}${serverDatabase}-${DATE}.sql
           else
             # Make a dump with password
-            sudo mysqldump -vl -u ${username} -p${password} -h ${host} ${serverDatabase} > ${TEMP_FOLDER}${serverDatabase}-${DATE}.sql
+            mysqldump -vl -u ${username} -p${password} -h ${host} ${serverDatabase} > ${TEMP_FOLDER}${serverDatabase}-${DATE}.sql
           fi
           # Upload database with debug mode on
-          sudo aws s3 cp --debug --endpoint-url ${endpoint_url} ${TEMP_FOLDER}${serverDatabase}-${DATE}.sql s3://${bucket}/${destination}
+          aws s3 cp --debug --endpoint-url ${endpoint_url} ${TEMP_FOLDER}${serverDatabase}-${DATE}.sql s3://${bucket}/${destination}
         # If debug is false
         else
           # Check if password is null
           if [[ $password == "" ]]; then
             # Make a dump without debug and without password
-            sudo mysqldump -l -u ${username} -h ${host} ${serverDatabase} > ${TEMP_FOLDER}${serverDatabase}-${DATE}.sql
+            mysqldump -l -u ${username} -h ${host} ${serverDatabase} > ${TEMP_FOLDER}${serverDatabase}-${DATE}.sql
           else
             # Make a dump with password and wiithout debug
-            sudo mysqldump -l -u ${username} -p${password} -h ${host} ${serverDatabase} > ${TEMP_FOLDER}${serverDatabase}-${DATE}.sql
+            mysqldump -l -u ${username} -p${password} -h ${host} ${serverDatabase} > ${TEMP_FOLDER}${serverDatabase}-${DATE}.sql
           fi
           # Upload database with quiet mode on
-          sudo aws s3 cp --quiet --no-progress --only-show-errors --endpoint-url ${endpoint_url} ${TEMP_FOLDER}${serverDatabase}-${DATE}.sql s3://${bucket}/${destination}
+          aws s3 cp --quiet --no-progress --only-show-errors --endpoint-url ${endpoint_url} ${TEMP_FOLDER}${serverDatabase}-${DATE}.sql s3://${bucket}/${destination}
         fi
       done
       # Pring out a message that SQL Backup is complete.
@@ -187,9 +187,9 @@ function initiateBackup {
     echo -e "${PREFIX} Setting Amazon S3 Settings $DEFAULTC"
 
     # Set the region, secret, and access key
-    sudo aws configure set default.region $region
-    sudo aws configure set aws_secret_access_key $secret_key
-    sudo aws configure set aws_access_key_id $access_key
+    aws configure set default.region $region
+    aws configure set aws_secret_access_key $secret_key
+    aws configure set aws_access_key_id $access_key
 
     # Run the backup
     runBackup
