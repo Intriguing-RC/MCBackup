@@ -12,7 +12,7 @@ REDC="\e[31m"
 CYANC="\e[36m"
 GREENC="\e[32m"
 
-VERSION="0.1"
+VERSION="0.1.1"
 
 PREFIX="${YELLOWC}[Backup System]"
 TEMP_FOLDER="/home/.$(uuidgen)/"
