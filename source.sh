@@ -21,22 +21,22 @@ DATE=$(date +%m-%d-%y-%T)
 #
 # Load Configuration Settings
 #
-debug=$(yq r backup.yml debug)
-endpoint_url=$(yq r backup.yml bucket-settings.endpoint-url)
-secret_key=$(yq r backup.yml bucket-settings.secret-key)
-access_key=$(yq r backup.yml bucket-settings.access-key)
-region=$(yq r backup.yml bucket-settings.region)
-bucket=$(yq r backup.yml bucket-settings.bucket)
-host=$(yq r backup.yml mysql-settings.host)
-username=$(yq r backup.yml mysql-settings.username)
-password=$(yq r backup.yml mysql-settings.password)
+debug=$(yq e ".debug" backup.yml)
+endpoint_url=$(yq e ".bucket-settings.endpoint-url" backup.yml)
+secret_key=$(yq e ".bucket-settings.secret-key" backup.yml)
+access_key=$(yq e ".bucket-settings.access-key" backup.yml)
+region=$(yq e ".bucket-settings.region" backup.yml)
+bucket=$(yq e ".bucket-settings.bucket" backup.yml)
+host=$(yq e ".mysql-settings.host" backup.yml)
+username=$(yq e ".mysql-settings.username" backup.yml)
+password=$(yq e ".mysql-settings.password" backup.yml)
 
 #
 # Run Backup Function
 #
 function runBackup {
   # Get the number of servers in the configuration
-  serverCount=$(expr $(yq r backup.yml --length servers) - 1)
+  serverCount=$(expr $(yq e ".--length servers" backup.yml) - 1)
 
   # Print starting backup message
   echo -e "${PREFIX} Starting Backup ($(date +%D\ %H:%M:%S))${DEFAULTC}"
@@ -46,7 +46,7 @@ function runBackup {
   for s in $(sudo seq 0 ${serverCount})
   do
     # Set current server name
-    server=$(yq r backup.yml servers[$s].name)
+    server=$(yq e ".servers[$s].name" backup.yml)
     # Print it out
     echo -e "${GREENC}- ${server}"
   done
@@ -55,12 +55,12 @@ function runBackup {
   for s in $(sudo seq 0 ${serverCount})
   do
     # Set current server name, folder, database length, and if the different modules are enabled
-    serverName=$(yq r backup.yml servers[$s].name)
-    serverFolder=$(yq r backup.yml servers[$s].sources.server-folder)
-    serverDatabasesLength=$(expr $(yq r backup.yml --length servers[$s].sources.mysql-databases) - 1)
-    nonCompressedEnabled=$(yq r backup.yml servers[$s].modules.non-compressed.enabled)
-    compressedEnabled=$(yq r backup.yml servers[$s].modules.compressed.enabled)
-    sqlEnabled=$(yq r backup.yml servers[$s].modules.sql.enabled)
+    serverName=$(yq e ".servers[$s].name" backup.yml)
+    serverFolder=$(yq e ".servers[$s].sources.server-folder" backup.yml)
+    serverDatabasesLength=$(expr $(yq e ".--length servers[$s].sources.mysql-databases" backup.yml) - 1)
+    nonCompressedEnabled=$(yq e ".servers[$s].modules.non-compressed.enabled" backup.yml)
+    compressedEnabled=$(yq e ".servers[$s].modules.compressed.enabled" backup.yml)
+    sqlEnabled=$(yq e ".servers[$s].modules.sql.enabled" backup.yml)
 
     # Print out server name and set sources message
     echo -e "\n\n${BOLDF}${REDC}BACKING UP: ${NORMALF}${GREENC}${serverName}"
@@ -74,7 +74,7 @@ function runBackup {
     for d in $(sudo seq 0 ${serverDatabasesLength})
     do
       # Set current database in the loop
-      serverDatabase=$(yq r backup.yml servers[$s].sources.mysql-databases[$d])
+      serverDatabase=$(yq e ".servers[$s].sources.mysql-databases[$d]" backup.yml)
       # Print it out
       echo -e "${GREENC}- ${serverDatabase}"
     done
@@ -94,7 +94,7 @@ function runBackup {
     # Non Compress Backup
     if [[ $nonCompressedEnabled == true ]]; then
       # Set destination
-      destination=$(yq r backup.yml servers[$s].modules.non-compressed.destination)
+      destination=$(yq e ".servers[$s].modules.non-compressed.destination" backup.yml)
       # Print out that the process is starting
       echo -e "${PREFIX} Starting Non Compressed Backup Process${CYANC}"
 
@@ -114,7 +114,7 @@ function runBackup {
     # Compressed Backup
     if [[ $compressedEnabled == true ]]; then
       # Set destination
-      destination=$(yq r backup.yml servers[$s].modules.compressed.destination)
+      destination=$(yq e ".servers[$s].modules.compressed.destination" backup.yml)
       # Print out that the process is starting
       echo -e "${PREFIX} Starting Compressed Backup Process${CYANC}"
 
@@ -139,14 +139,14 @@ function runBackup {
     # SQL Backup
     if [[ $sqlEnabled == true ]]; then
       # Set destination
-      destination=$(yq r backup.yml servers[$s].modules.sql.destination)
+      destination=$(yq e ".servers[$s].modules.sql.destination" backup.yml)
       # Print out that the process is starting
       echo -e "${PREFIX} Starting SQL Backup Process${CYANC}"
       # Do for each SQL database
       for d in $(sudo seq 0 ${serverDatabasesLength})
       do
         # Set current database
-        serverDatabase=$(yq r backup.yml servers[$s].sources.mysql-databases[$d])
+        serverDatabase=$(yq e ".servers[$s].sources.mysql-databases[$d]" backup.yml)
         # Check if debug is true
         if [[ ${debug} == true ]]; then
           # Check if password is null
