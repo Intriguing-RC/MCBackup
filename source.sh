@@ -1,5 +1,5 @@
 #!/bin/bash
-
+PATH="/usr/local/bin:$PATH"
 #
 # Load Static Settings
 #
@@ -36,7 +36,7 @@ password=$(yq e ".mysql-settings.password" backup.yml)
 #
 function runBackup {
   # Get the number of servers in the configuration
-  serverCount=$(expr $(yq e ".--length servers" backup.yml) - 1)
+  serverCount=$(expr $(yq e ".servers | length" backup.yml) - 1)
 
   # Print starting backup message
   echo -e "${PREFIX} Starting Backup ($(date +%D\ %H:%M:%S))${DEFAULTC}"
