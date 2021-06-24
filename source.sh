@@ -57,7 +57,7 @@ function runBackup {
     # Set current server name, folder, database length, and if the different modules are enabled
     serverName=$(yq e ".servers[$s].name" backup.yml)
     serverFolder=$(yq e ".servers[$s].sources.server-folder" backup.yml)
-    serverDatabasesLength=$(expr $(yq e ".--length servers[$s].sources.mysql-databases" backup.yml) - 1)
+    serverDatabasesLength=$(expr $(yq e ".servers[$s].sources.mysql-databases | length" backup.yml) - 1)
     nonCompressedEnabled=$(yq e ".servers[$s].modules.non-compressed.enabled" backup.yml)
     compressedEnabled=$(yq e ".servers[$s].modules.compressed.enabled" backup.yml)
     sqlEnabled=$(yq e ".servers[$s].modules.sql.enabled" backup.yml)
